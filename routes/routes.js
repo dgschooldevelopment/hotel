@@ -7,7 +7,7 @@ const { adminLogin } = require('../controllers/adminlogin');
 const { villaRegister, villaLogin } = require('../controllers/villalogin');
 const { hotelList } = require('../controllers/hotellist');
 const { Inserthotel_List } = require('../controllers/Inserthotellist');
-const { fetchNearbyHotels } = require('../controllers/Searchhotel'); // Adjust path as per your project structure
+//const { fetchNearbyHotels } = require('../controllers/Searchhotel'); // Adjust path as per your project structure
 const { bookHotel } = require('../controllers/bookhotel');
 const { fetchHotelDetails } = require('../controllers/fetchHotelDetails'); // Adjust path as per your project structure
 const { searchHotels } = require('../controllers/checkhotel');
@@ -26,7 +26,7 @@ router.post('/villalogin', villaLogin);
 // Hotel routes
 router.get('/hotellist', hotelList);
 router.post('/hotel_insert', Inserthotel_List);
-router.get('/nearbyhotels', fetchNearbyHotels);
+//router.get('/nearbyhotels', fetchNearbyHotels);
 router.post('/book-hotel', bookHotel);
 router.get('/searchhotels', searchHotels); 
 router.get('/fetchHotelDetails', fetchHotelDetails); 

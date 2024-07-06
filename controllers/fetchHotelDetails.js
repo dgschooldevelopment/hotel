@@ -33,7 +33,8 @@ const fetchHotelDetails = async (req, res) => {
                 r.review_date,
                 hi.image_id AS hotel_image_id,
                 hi.image_url AS hotel_image_url,
-                hi.image_description AS hotel_image_description
+                hi.image_description AS hotel_image_description,
+                hi.image AS image_data_hotel
             FROM
                 hotel_list h
             LEFT JOIN
@@ -110,8 +111,10 @@ const fetchHotelDetails = async (req, res) => {
                 hotelDetails.hotel_images.push({
                     image_id: row.hotel_image_id,
                     image_url: row.hotel_image_url,
-                    image_description: row.hotel_image_description
+                    image_description: row.hotel_image_description,
+                    image_data_hotel: row.image_data_hotel ? row.image_data_hotel.toString('base64') : null,
                 });
+                
                 addedHotelImages[row.hotel_image_id] = true;
             }
         });

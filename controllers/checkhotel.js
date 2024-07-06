@@ -222,7 +222,8 @@ const searchHotels = async (req, res) => {
                     image_id,
                     hotel_id,
                     image_url,
-                    image_description
+                    image_description,
+                    image
                 FROM
                     hotel_images
                 WHERE
