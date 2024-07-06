@@ -30,25 +30,25 @@ const Inserthotel_List = async (req, res) => {
 
         // Insert the hotel into the database
         const insertHotelQuery = `
-    INSERT INTO hotel_list 
-        (name, total_no_of_guests, total_no_of_rooms, type_of_accommodation, location, price_per_room, about, policy_rules, facilities, FAQ,locationcodeaddresss, home_rules_and_truths, amenities)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-`;
-const [insertHotelResult] = await connection.query(insertHotelQuery, [
-    name,
-    total_no_of_guests,
-    total_no_of_rooms,
-    type_of_accommodation,
-    location,
-    price_per_room,
-    about,
-    JSON.stringify(policy_rules),
-    JSON.stringify(facilities),
-    JSON.stringify(FAQ),
-    JSON.stringify({ latitude, longitude }), // Combine latitude and longitude into a single JSON object
-    JSON.stringify(home_rules_and_truths),
-    JSON.stringify(amenities)
-]);
+            INSERT INTO hotel_list 
+                (name, total_no_of_guests, total_no_of_rooms, type_of_accommodation, location, price_per_room, about, policy_rules, facilities, FAQ, locationcodeaddress, home_rules_and_truths, amenities)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        const [insertHotelResult] = await connection.query(insertHotelQuery, [
+            name,
+            JSON.stringify(total_no_of_guests),
+            total_no_of_rooms,
+            type_of_accommodation,
+            location,
+            price_per_room,
+            about,
+            JSON.stringify(policy_rules),
+            JSON.stringify(facilities),
+            JSON.stringify(FAQ),
+            JSON.stringify({ latitude, longitude }), // Combine latitude and longitude into a single JSON object
+            JSON.stringify(home_rules_and_truths),
+            JSON.stringify(amenities)
+        ]);
 
         if (insertHotelResult.affectedRows !== 1) {
             throw new Error('Failed to create hotel');
@@ -79,7 +79,7 @@ const [insertHotelResult] = await connection.query(insertHotelQuery, [
         // Commit the transaction
         await connection.commit();
 
-        res.status(201).json({ success: true, message: 'Hotel created successfully' });
+        res.status(201).json({ success: true, message: 'Hotel created successfully', hotelId });
     } catch (error) {
         // Rollback the transaction in case of an error
         await connection.rollback();
