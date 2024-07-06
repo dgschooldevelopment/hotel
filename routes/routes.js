@@ -9,7 +9,9 @@ const { hotelList } = require('../controllers/hotellist');
 const { Inserthotel_List } = require('../controllers/Inserthotellist');
 const { fetchNearbyHotels } = require('../controllers/Searchhotel'); // Adjust path as per your project structure
 const { bookHotel } = require('../controllers/bookhotel');
-const { searchHotels } = require('../controllers/checkhotel'); // Import searchHotels function
+const { fetchHotelDetails } = require('../controllers/fetchHotelDetails'); // Adjust path as per your project structure
+const { searchHotels } = require('../controllers/checkhotel');
+const { Insertreviews } = require('../controllers/insertreviews'); // Import searchHotels function
 // User routes
 router.post('/userlogin', userLogin);
 router.post('/usersignUp', userSignUp);
@@ -27,4 +29,7 @@ router.post('/hotel_insert', Inserthotel_List);
 router.get('/nearbyhotels', fetchNearbyHotels);
 router.post('/book-hotel', bookHotel);
 router.get('/searchhotels', searchHotels); 
+router.get('/fetchHotelDetails', fetchHotelDetails); 
+router.get('/fetchHotelDetails', fetchHotelDetails); 
+router.post('/Insertreviews', Insertreviews); 
 module.exports = router;

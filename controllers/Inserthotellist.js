@@ -10,69 +10,83 @@ const Inserthotel_List = async (req, res) => {
         location,
         price_per_room,
         about,
-        spaces,
-        meals,
-        experience,
-        home_rules_and_truths,
-        images // Array of objects with image_url and image_description
+        amenities,
+        policy_rules, // JSON data
+        facilities, // JSON data
+        FAQ, // JSON data
+        home_rules_and_truths, // JSON data
+        meals, // Array of meal objects
+        hotel_images // Array of image objects
     } = req.body;
+
+    const connection = await hotelPool.getConnection();
 
     try {
         // Geocode the address to get latitude and longitude
         const { latitude, longitude } = await geocodeAddress(location);
 
         // Start a transaction
-        await hotelPool.query('START TRANSACTION');
+        await connection.beginTransaction();
 
         // Insert the hotel into the database
         const insertHotelQuery = `
-            INSERT INTO hotel_list 
-                (name, total_no_of_guests, total_no_of_rooms, type_of_accommodation, location, price_per_room, about, spaces, meals, experience, home_rules_and_truths, latitude, longitude, faq,
-        policy)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)
-        `;
-        const [insertHotelResult] = await hotelPool.query(insertHotelQuery, [
-            name,
-            total_no_of_guests,
-            total_no_of_rooms,
-            type_of_accommodation,
-            location,
-            price_per_room,
-            about,
-            spaces,
-            meals,
-            experience,
-            home_rules_and_truths,
-            latitude, faq,
-            policy,
-            longitude
-        ]);
+    INSERT INTO hotel_list 
+        (name, total_no_of_guests, total_no_of_rooms, type_of_accommodation, location, price_per_room, about, policy_rules, facilities, FAQ,locationcodeaddresss, home_rules_and_truths, amenities)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
+const [insertHotelResult] = await connection.query(insertHotelQuery, [
+    name,
+    total_no_of_guests,
+    total_no_of_rooms,
+    type_of_accommodation,
+    location,
+    price_per_room,
+    about,
+    JSON.stringify(policy_rules),
+    JSON.stringify(facilities),
+    JSON.stringify(FAQ),
+    JSON.stringify({ latitude, longitude }), // Combine latitude and longitude into a single JSON object
+    JSON.stringify(home_rules_and_truths),
+    JSON.stringify(amenities)
+]);
 
         if (insertHotelResult.affectedRows !== 1) {
             throw new Error('Failed to create hotel');
         }
 
-        const hotel_id = insertHotelResult.insertId;
+        const hotelId = insertHotelResult.insertId;
 
-        // Insert images into the hotel_images table
-        if (images && images.length > 0) {
-            const imageValues = images.map(image => [hotel_id, image.image_url, image.image_description]);
-            const insertImagesQuery = `
-                INSERT INTO hotel_images (hotel_id, image_url, image_description)
-                VALUES ?
-            `;
-            await hotelPool.query(insertImagesQuery, [imageValues]);
+        // Insert into meal table
+        const mealQuery = `
+            INSERT INTO meal (hotel_id, meal_name, description, image_data) VALUES (?, ?, ?, ?)
+        `;
+        for (const meal of meals) {
+            await connection.query(mealQuery, [
+                hotelId, meal.meal_name, meal.description, meal.image_data
+            ]);
+        }
+
+        // Insert into hotel_images table
+        const hotelImageQuery = `
+            INSERT INTO hotel_images (hotel_id, image_url, image_description) VALUES (?, ?, ?)
+        `;
+        for (const image of hotel_images) {
+            await connection.query(hotelImageQuery, [
+                hotelId, image.image_url, image.image_description
+            ]);
         }
 
         // Commit the transaction
-        await hotelPool.query('COMMIT');
+        await connection.commit();
 
         res.status(201).json({ success: true, message: 'Hotel created successfully' });
     } catch (error) {
         // Rollback the transaction in case of an error
-        await hotelPool.query('ROLLBACK');
+        await connection.rollback();
         console.error('Error creating hotel:', error);
         res.status(500).json({ error: 'Internal server error' });
+    } finally {
+        connection.release();
     }
 };
 

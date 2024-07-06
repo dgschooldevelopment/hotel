@@ -9,6 +9,7 @@ const searchHotels = async (req, res) => {
         const rooms = parseInt(total_no_of_rooms);
 
         // Validate parsed values
+        
         if (isNaN(rooms)) {
             return res.status(400).json({ error: 'Invalid number of rooms' });
         }
