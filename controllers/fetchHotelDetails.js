@@ -115,6 +115,7 @@ const fetchHotelDetails = async (req, res) => {
                     image_data_hotel: row.image_data_hotel ? row.image_data_hotel.toString('base64') : null,
                 });
                 
+                
                 addedHotelImages[row.hotel_image_id] = true;
             }
         });
