@@ -173,7 +173,7 @@ const Inserthotel_List = async (req, res) => {
 
         // Insert into frontimages table
         const frontImageQuery = `
-            INSERT INTO frontimages (hotel_id, image_data, upload_date, image_description) VALUES (?, ?, NOW(), ?)
+            INSERT INTO frontimages (hotel_id, image_data, upload_date) VALUES (?, ?, NOW())
         `;
         for (const frontImage of front_images) {
             await connection.query(frontImageQuery, [
